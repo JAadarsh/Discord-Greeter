@@ -30,11 +30,11 @@ Aadarsh Joshi
 
 
 
-GitHub - version control
+GitHub - Version Control
 
-Render - website deploy
+Render - Webiste / Bot Hosting
 
-Database - 
+Supabase - SQL Database Hosting 
 
 
 

@@ -7,6 +7,7 @@ import OpenRouterRequests
 import os
 import threading
 import logging
+from flask import Flask
 from dotenv import load_dotenv
 from discord.ext import commands
 from http.server import BaseHTTPRequestHandler, HTTPServer
