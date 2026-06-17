@@ -42,9 +42,9 @@ Database -
 
 
 
-Feel free to use this project while citing proper credit. Reach out for any for-profit usage in any capacity. 
+Feel free to use this project while citing proper credit. Reach out to inquire about  for-profit usage in any capacity. 
 
 
 
-IP of Aadarsh Joshi 2026. 
+Copyright & IP of Aadarsh Joshi 2026. 
 
