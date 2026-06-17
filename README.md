@@ -26,11 +26,15 @@ Aadarsh Joshi
 
 
 
-#### Sources Used
+#### Services Used
 
 
 
 GitHub - version control
+
+Render - website deploy
+
+Database - 
 
 
 
