@@ -51,7 +51,11 @@ async def on_ready():
     print(f'Logged in as {bot.user.name} (ID: {bot.user.id})')
 
     bot.db = Database(supabase_url, supabase_key)
-    await bot.db.connect()
-    print("Database connected.")
+
+    try:
+        await bot.db.connect()
+        print("Database connected.")
+    except Exception as e:
+        print(f"Error connecting to database: {e}")
 
 bot.run(token)
