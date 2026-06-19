@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 from discord.ext import commands
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from SupabaseRequests import Database
+from discord import app_commands
 
 """
 This is to get around render's web hosting requirement.
@@ -59,5 +60,30 @@ async def on_ready():
         print(f"Error connecting to database: {e}")
 
 
+# set the uni message through / or ! commands
+@bot.hybrid_command(name="setmessage", description="Set your own custom greeting message!")
+@app_commands.describe(text="The custom sentence or phrase you want to save")
+async def universal_message(ctx: commands.Context, *, text: str):
+    
+    if len(text) > 1500:
+        return await ctx.send("Message is too long. Please keep it under 1500 characters.")
+        
+    await bot.db.set_universal_message(ctx.author.id, text)
+    await ctx.send("Universal message updated.")
+
+@bot.hybrid_command(name="viewmessage", description="View current message")
+@app_commands.describe("View current message")
+async def view_message(ctx:commands.Context):
+    message = await bot.db.get_universal_message(ctx.author.id)
+    if message:
+        await ctx.send(f"Current message is {message}")
+    else:
+        await ctx.send(f"No current message. Use /setmessage to set one.")
+
+@bot.hybrid_command(name="add recipient", description="add someone to the mailing list")
+@app_commands.describe(recipient="The user you want to add to the mailing list")
+async def add_recipient(ctx:commands.Context, recipient: discord.User):
+    await bot.db.add_recipient(ctx.author.id, recipient.id)
+    await ctx.send(f"{recipient.name} has been added to your recipient list.")
 
 bot.run(token)

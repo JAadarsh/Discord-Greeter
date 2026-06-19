@@ -27,7 +27,7 @@ class Database:
     async def create_messenger_user(self, user_id:int):
         data_to_save = {
             "user_id": user_id,
-            "recipient_list": [], # shold be in user_id int format
+            "recipient_list": [], # should be in user_id int format
             "universal_message": ""
         }
         await self.client.table("messenger").insert(data_to_save).execute()
