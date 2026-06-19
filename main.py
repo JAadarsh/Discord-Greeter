@@ -58,4 +58,6 @@ async def on_ready():
     except Exception as e:
         print(f"Error connecting to database: {e}")
 
+
+
 bot.run(token)
