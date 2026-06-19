@@ -8,6 +8,12 @@ deepseek_model = "deepseek/deepseek-r1-0528:free"
 devstral_model = "mistralai/devstral-2512:free"
 gemma_model="google/gemma-3n-e4b-it:free"
 
+"""
+Notice:
+If it wasn't obvious, all of these models are free models via openrouter
+For scaling purposes, an upgraded model with a fairly low cost could be utilized.
+However, for all current purposes, these lightweight models are more than enough.
+"""
 
 def chat_deepseek(prompt, model=f"{deepseek_model}"):
     response = requests.post(
