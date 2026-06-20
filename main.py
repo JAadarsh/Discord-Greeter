@@ -86,4 +86,16 @@ async def add_recipient(ctx:commands.Context, recipient: discord.User):
     await bot.db.add_recipient(ctx.author.id, recipient.id)
     await ctx.send(f"{recipient.name} has been added to your recipient list.")
 
+
+"""
+Section is mainly for testing, may be refined in a later update. 19 June 2026
+"""
+@bot.hybrid_command(name="say something", description="get an AI generated response")
+@app_commands.describe(prompt="the prompt you want to send")
+async def say_something(ctx:commands.Context, *, prompt:str):
+    if len(prompt) > 500:
+        return await ctx.send("Prompt is too long. Please keep it under 500 characters.")
+    response = OpenRouterRequests.chat_devstral(prompt)
+    await ctx.send(response)
+
 bot.run(token)
