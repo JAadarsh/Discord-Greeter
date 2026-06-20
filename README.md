@@ -34,7 +34,7 @@ GitHub - Version Control
 
 Render - Webiste / Bot Hosting
 
-Supabase - SQL Database Hosting
+Supabase - AWS SQL Database Hosting
 
 
 
