@@ -72,7 +72,7 @@ async def universal_message(ctx: commands.Context, *, text: str):
     await ctx.send("Universal message updated.")
 
 @bot.hybrid_command(name="viewmessage", description="View current message")
-@app_commands.describe("View current message")
+@app_commands.describe()
 async def view_message(ctx:commands.Context):
     message = await bot.db.get_universal_message(ctx.author.id)
     if message:
@@ -80,8 +80,8 @@ async def view_message(ctx:commands.Context):
     else:
         await ctx.send(f"No current message. Use /setmessage to set one.")
 
-@bot.hybrid_command(name="add recipient", description="add someone to the mailing list")
-@app_commands.describe(recipient="The user you want to add to the mailing list")
+@bot.hybrid_command(name="add_recipient", description="add someone to the mailing list")
+@app_commands.describe()
 async def add_recipient(ctx:commands.Context, recipient: discord.User):
     await bot.db.add_recipient(ctx.author.id, recipient.id)
     await ctx.send(f"{recipient.name} has been added to your recipient list.")
@@ -90,8 +90,8 @@ async def add_recipient(ctx:commands.Context, recipient: discord.User):
 """
 Section is mainly for testing, may be refined in a later update. 19 June 2026
 """
-@bot.hybrid_command(name="say something", description="get an AI generated response")
-@app_commands.describe(prompt="the prompt you want to send")
+@bot.hybrid_command(name="say_something", description="get an AI generated response")
+@app_commands.describe()
 async def say_something(ctx:commands.Context, *, prompt:str):
     if len(prompt) > 500:
         return await ctx.send("Prompt is too long. Please keep it under 500 characters.")
