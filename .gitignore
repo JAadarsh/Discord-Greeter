@@ -1,8 +1,13 @@
 .env
 logs.txt
+
+# .py files
 discord.log
 .venv/
 __pycache__/
 testfilemain.py
 testfileOR.py
+
+# .ts .js & .json files
 node_modules/
+dist/

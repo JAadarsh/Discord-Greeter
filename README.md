@@ -42,7 +42,7 @@ Supabase - AWS SQL Database Hosting
 
 
 
-Feel free to use this project while citing proper credit. Reach out to inquire about  for-profit usage in any capacity.
+Feel free to use this project while citing proper credit. Reach out to inquire about for-profit usage in any capacity.
 
 
 
