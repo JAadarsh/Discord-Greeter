@@ -24,6 +24,7 @@ class Database:
     This is the section for the messenger. 
     Purpose is to send dms to specific users.
     """
+    
     async def create_messenger_user(self, user_id: int):
         """Initializes or resets a messenger profile safely."""
         data_to_save = {
