@@ -42,6 +42,7 @@ intents = discord.Intents.all()
 # command prefix is !, change later because its popular
 bot = commands.Bot(command_prefix='!', intents=intents)
 
+
 # -------------------------------------------------
 # ^ This is the setup for bot & creating a server 
 # v This is the actual bot stuff

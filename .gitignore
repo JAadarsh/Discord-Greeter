@@ -3,3 +3,6 @@ logs.txt
 discord.log
 .venv/
 __pycache__/
+testfilemain.py
+testfileOR.py
+node_modules/
