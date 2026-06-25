@@ -34,7 +34,7 @@ This is a discord bot inspired by a good friend of mine. Hope you enjoy it!
 
 **Render** - Webiste / Bot Hosting
 
-**Supabase** - AWS SQL Database Hosting
+**Supabase** - SQL Database Hosting \[AWS]
 
 
 
@@ -54,5 +54,5 @@ Copyright \& IP of Aadarsh Joshi 2026.
 
 
 
-24 June 2026: overhaul to the file organization. some functions may not work as intended. 
+24 June 2026: overhaul to the file organization. some functions may not work as intended.
 
