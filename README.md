@@ -48,3 +48,11 @@ Feel free to use this project while citing proper credit. Reach out to inquire a
 
 Copyright \& IP of Aadarsh Joshi 2026.
 
+
+
+## Changelog
+
+
+
+24 June 2026: overhaul to the file organization. some functions may not work as intended. 
+
