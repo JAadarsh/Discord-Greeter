@@ -2,8 +2,10 @@
 Copyright Aadarsh Joshi 2026 all rights reserved.
 """
 
+import asyncio
 import discord
 import backend.openrouterpy.OpenRouterRequests as OpenRouterRequests
+import backend.openrouterpy.testfileOR as testfileOR
 import os
 import threading
 import logging
@@ -12,6 +14,17 @@ from discord.ext import commands
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from backend.supabase.SupabaseRequests import Database
 from discord import app_commands
+
+"""
+IMPORTANT NOTICE - READ BEFORE DEPLOYING:
+This but should not be deployed in its current state.
+Currently it actually uses a model from a file that is in .gitignore
+Furthermore, it also takes too long to respond to prompts.
+Currently that error is overridden with this recent update
+BUT DO NOT DEPLOY THIS BOT.
+Uploading to github for progress tracking incase I need to pull this back.
+"""
+
 
 """
 This is to get around render's web hosting requirement.
@@ -104,7 +117,14 @@ Section is mainly for testing, may be refined in a later update. 19 June 2026
 async def say_something(interaction: discord.Interaction, *, prompt: str):
     if len(prompt) > 500:
         return await interaction.response.send_message("Prompt is too long. Please keep it under 500 characters.", ephemeral=True)
-    response = OpenRouterRequests.chat_devstral(prompt)
-    await interaction.response.send_message(response)
+
+    await interaction.response.defer(thinking=True)
+
+    try:
+        response = await asyncio.to_thread(testfileOR.get_openrouter_response, prompt)
+    except Exception as e:
+        return await interaction.followup.send(f"Error {e}. Please contact the developer.", ephemeral=True)
+
+    await interaction.followup.send(response)
 
 bot.run(token)
