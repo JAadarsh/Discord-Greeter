@@ -34,7 +34,6 @@ load_dotenv()
 token = os.getenv('DISCORD_TOKEN')
 supabase_url = os.getenv('SUPABASE_URL')
 supabase_key = os.getenv('SUPABASE_KEY')
-command_guild_id = int(os.getenv('COMMAND_GUILD_ID')) if os.getenv('COMMAND_GUILD_ID') else None
 handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
 
 intents = discord.Intents.all()
@@ -63,14 +62,8 @@ async def on_ready():
         print(f"Error connecting to database: {e}")
 
     try:
-        if command_guild_id:
-            guild = discord.Object(id=command_guild_id)
-            synced = await bot.tree.sync(guild=guild)
-            print(f"Synced {len(synced)} guild slash commands to guild {command_guild_id}.")
-        else:
-            print("No COMMAND_GUILD_ID set; syncing global slash commands. Global commands can take up to 1 hour to appear.")
-            synced = await bot.tree.sync()
-            print(f"Synced {len(synced)} global slash commands.")
+        synced = await bot.tree.sync()
+        print(f"Synced {len(synced)} global slash commands. Global commands can take up to 1 hour to appear.")
 
         registered = [command.name for command in bot.tree.walk_commands()]
         print(f"Registered slash command names: {registered}")
