@@ -1,8 +1,8 @@
-### Discord Greeter Bot
+# Discord Greeter Bot
 
 #### 
 
-#### Overview
+## Overview
 
 
 
@@ -18,27 +18,27 @@ This is a discord bot inspired by a good friend of mine. Hope you enjoy it!
 
 
 
-##### Development Team
+### Development Team
 
 
 
-Aadarsh Joshi
+**Aadarsh Joshi**
 
 
 
-#### Services Used
+## Services Used
 
 
 
-GitHub - Version Control
+**GitHub** - Version Control
 
-Render - Webiste / Bot Hosting
+**Render** - Webiste / Bot Hosting
 
-Supabase - AWS SQL Database Hosting
+**Supabase** - AWS SQL Database Hosting
 
 
 
-##### Rights
+## Rights
 
 
 
