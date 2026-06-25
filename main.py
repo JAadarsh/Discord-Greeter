@@ -3,14 +3,14 @@ Copyright Aadarsh Joshi 2026 all rights reserved.
 """
 
 import discord
-import OpenRouterRequests
+import backend.openrouterpy.OpenRouterRequests as OpenRouterRequests
 import os
 import threading
 import logging
 from dotenv import load_dotenv
 from discord.ext import commands
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from SupabaseRequests import Database
+from backend.supabase.SupabaseRequests import Database
 from discord import app_commands
 
 """
