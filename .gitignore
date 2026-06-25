@@ -1,6 +1,7 @@
 .env
 logs.txt
 discord.log
+misc_files/
 
 # .py files
 .venv/
