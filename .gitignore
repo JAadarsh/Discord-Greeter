@@ -1,8 +1,8 @@
 .env
 logs.txt
+discord.log
 
 # .py files
-discord.log
 .venv/
 __pycache__/
 testfilemain.py

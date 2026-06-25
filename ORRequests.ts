@@ -3,10 +3,10 @@ dotenv.config();
 
 const orToken = process.env.OPENROUTER;
 if (!orToken) {
-  throw new Error("Missing OPENROUTER in environment variables");
+  throw new Error("Missing OPENROUTER in .env");
 }
 
-// First API call with reasoning
+// test API call
 let response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
   method: "POST",
   headers: {
