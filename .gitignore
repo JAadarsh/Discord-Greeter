@@ -1,3 +1,4 @@
+# std. gitignore files
 .env
 logs.txt
 discord.log
