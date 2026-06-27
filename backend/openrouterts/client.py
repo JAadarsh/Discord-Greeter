@@ -20,13 +20,3 @@ def call_typescript_service():
     except requests.exceptions.RequestException as e:
         print(f"Failed to communicate with TypeScript server: {e}")
         return None
-
-# --- Example Usage ---
-if __name__ == "__main__":
-    print("Sending request to local TypeScript service...")
-    data = call_typescript_service()
-    
-    if data:
-        print("Successfully received data from TypeScript!")
-        # Access elements just like regular Python dictionaries
-        print(data)
