@@ -76,7 +76,7 @@ async def on_ready():
 
     try:
         synced = await bot.tree.sync()
-        print(f"Synced {len(synced)} global slash commands. Global commands can take up to 1 hour to appear.")
+        print(f"Synced {len(synced)} global slash commands.")
 
         registered = [command.name for command in bot.tree.walk_commands()]
         print(f"Registered slash command names: {registered}")

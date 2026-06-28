@@ -13,6 +13,9 @@ Notice:
 If it wasn't obvious, all of these models are free models via openrouter
 For scaling purposes, an upgraded model with a fairly low cost could be utilized.
 However, for all current purposes, these lightweight models are more than enough.
+
+Updated Notice:
+Along with the previous notice, some of these models may be disontinued. Check OR before deploying.
 """
 
 def chat_deepseek(prompt, model=f"{deepseek_model}"):
