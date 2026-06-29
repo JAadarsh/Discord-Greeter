@@ -46,7 +46,7 @@ threading.Thread(target=start_server, daemon=True).start()
 load_dotenv()
 token = os.getenv('DISCORD_TOKEN')
 supabase_url = os.getenv('SUPABASE_URL')
-supabase_key = os.getenv('SUPABASE_KEY')
+supabase_key = os.getenv('SUPABASE_SERVICE_KEY')
 handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
 
 intents = discord.Intents.all()
