@@ -54,5 +54,9 @@ Copyright \& IP of Aadarsh Joshi 2026.
 
 
 
+v0.1.1: fixes to supabase connection. add recipient slash command now works; additional bugs still to be fixed. 
+
+
+
 v0.1.0: overhaul to the file organization. some functions may not work as intended.
 

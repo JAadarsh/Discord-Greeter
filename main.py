@@ -1,4 +1,5 @@
 """
+Version 0.1.1
 Copyright Aadarsh Joshi 2026 all rights reserved.
 """
 
