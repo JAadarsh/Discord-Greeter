@@ -17,10 +17,10 @@ from discord import app_commands
 
 """
 IMPORTANT NOTICE - READ BEFORE DEPLOYING:
-This but should not be deployed in its current state.
-Currently it actually uses a model from a file that is in .gitignore
-Furthermore, it also takes too long to respond to prompts.
-Currently that error is overridden with this recent update
+This bot should not be deployed in its current state.
+
+Fixes made to the OR API. Response time is now around 3 seconds. 
+
 BUT DO NOT DEPLOY THIS BOT.
 Uploading to github for progress tracking incase I need to pull this back.
 """
