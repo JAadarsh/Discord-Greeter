@@ -1,73 +1,46 @@
+"""
+Update 28 June 2026. Implimented new OR free model. All the prior ones seem to be discontinued.
+Response time is around 3-5 seconds for the new model. Be sure to update main. 
+
+Aadarsh Joshi 2026
+"""
+
 from dotenv import load_dotenv
 import os
+import json
 import requests
 
 load_dotenv()
-or_token = os.getenv('OPENROUTER')
-deepseek_model = "deepseek/deepseek-r1-0528:free"
-devstral_model = "mistralai/devstral-2512:free"
-gemma_model="google/gemma-3n-e4b-it:free"
+OR_TOKEN = os.getenv('OPENROUTER')
+OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions'
+MODEL_NAME = 'liquid/lfm-2.5-1.2b-instruct:free'
 
-"""
-Notice:
-If it wasn't obvious, all of these models are free models via openrouter
-For scaling purposes, an upgraded model with a fairly low cost could be utilized.
-However, for all current purposes, these lightweight models are more than enough.
 
-Updated Notice:
-Along with the previous notice, some of these models may be disontinued. Check OR before deploying.
-"""
+def response(prompt: str, reasoning: bool = True) -> str:
+    """Send a prompt to OpenRouter and return the assistant response as a string."""
+    if not OR_TOKEN:
+        raise ValueError('OPENROUTER environment variable is not set.')
 
-def chat_deepseek(prompt, model=f"{deepseek_model}"):
+    payload = {
+        'model': MODEL_NAME,
+        'messages': [
+            {'role': 'user', 'content': f"Respond to this in under 150 words: {prompt}"}
+        ],
+    }
+
+    if reasoning:
+        payload['reasoning'] = {'enabled': True}
+
     response = requests.post(
-        "https://openrouter.ai/api/v1/chat/completions",
+        url=OPENROUTER_URL,
         headers={
-            "Authorization": f"Bearer {or_token}",
-            "Content-Type": "application/json",
+            'Authorization': f'Bearer {OR_TOKEN}',
+            'Content-Type': 'application/json',
         },
-        json={
-            "model": model,
-            "messages": [{"role": "user", "content": prompt}],
-        },
-        timeout=30,
+        data=json.dumps(payload),
     )
     response.raise_for_status()
-    return response.json()["choices"][0]["message"]["content"]
+    response_data = response.json()
 
-
-def chat_devstral(prompt):
-    response = requests.post(
-        "https://openrouter.ai/api/v1/chat/completions",
-        headers={
-            "Authorization": f"Bearer {or_token}",
-        },
-        json={
-            "model": f"{devstral_model}",
-            "messages": [
-                {"role": "user", "content": prompt}
-            ],
-        },
-        timeout=30,
-    )
-    response.raise_for_status()
-    data = response.json()
-    return data["choices"][0]["message"]["content"]
-
-
-def chat_gemma(prompt):
-    response = requests.post(
-        "https://openrouter.ai/api/v1/chat/completions",
-        headers={
-            "Authorization": f"Bearer {or_token}",
-        },
-        json={
-            "model": f"{gemma_model}",
-            "messages": [
-                {"role": "user", "content": prompt}
-            ],
-        },
-        timeout=30,
-    )
-    response.raise_for_status()
-    data = response.json()
-    return data["choices"][0]["message"]["content"]
+    assistant_message = response_data['choices'][0]['message']
+    return assistant_message.get('content', '') or ''

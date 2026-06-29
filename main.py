@@ -5,7 +5,7 @@ Copyright Aadarsh Joshi 2026 all rights reserved.
 import asyncio
 import discord
 import backend.openrouterpy.OpenRouterRequests as OpenRouterRequests
-import backend.openrouterpy.testfileOR as testfileOR
+# import backend.openrouterpy.testfileOR as testfileOR # local testing only.
 import os
 import threading
 import logging
@@ -121,7 +121,7 @@ async def say_something(interaction: discord.Interaction, *, prompt: str):
     await interaction.response.defer(thinking=True)
 
     try:
-        response = await asyncio.to_thread(testfileOR.get_openrouter_response, prompt)
+        response = await asyncio.to_thread(OpenRouterRequests.response, prompt, True)
     except Exception as e:
         return await interaction.followup.send(f"Error {e}. Please contact the developer.", ephemeral=True)
 
