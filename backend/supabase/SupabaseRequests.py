@@ -27,6 +27,7 @@ class Database:
     
     async def create_messenger_user(self, user_id: int):
         """Initializes or resets a messenger profile safely."""
+        
         data_to_save = {
             "user_id": user_id,
             "recipient_list": [],  # stored in int8[] format in Supabase
@@ -37,6 +38,7 @@ class Database:
 
     async def set_universal_message(self, user_id: int, message: str):
         """Updates or sets the message. Uses upsert to create row if missing."""
+
         await self.client.table("messenger").upsert({
             "user_id": user_id,
             "universal_message": message
@@ -44,6 +46,7 @@ class Database:
 
     async def get_universal_message(self, user_id: int) -> str:
         """Retrieves the universal message or returns empty string if missing."""
+
         response = await self.client.table("messenger").select("universal_message").eq("user_id", user_id).execute()
         if not response.data:
             return ""  # Default value for new users
@@ -51,6 +54,7 @@ class Database:
     
     async def add_recipient(self, user_id: int, recipient_id: int):
         """Appends a user ID to the array safely, preventing duplicates."""
+
         response = await self.client.table("messenger").select("recipient_list").eq("user_id", user_id).execute()
         
         if not response.data:
@@ -68,6 +72,7 @@ class Database:
 
     async def remove_recipient(self, user_id: int, recipient_id: int):
         """Removes a user ID from the array if present."""
+
         response = await self.client.table("messenger").select("recipient_list").eq("user_id", user_id).execute()
         if not response.data:
             return  # No profile exists, nothing to remove
@@ -83,6 +88,7 @@ class Database:
 
     async def get_recipients(self, user_id: int) -> list:
         """Returns the list of stored recipient IDs."""
+
         response = await self.client.table("messenger").select("recipient_list").eq("user_id", user_id).execute()
         if not response.data:
             return []  # Default empty list for new users
