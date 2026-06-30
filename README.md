@@ -54,7 +54,11 @@ Copyright \& IP of Aadarsh Joshi 2026.
 
 
 
-v0.1.1: fixes to supabase connection. add recipient slash command now works; additional bugs still to be fixed. 
+v0.1.2: supabase connection fixed and setmessage is now functional. 
+
+
+
+v0.1.1: fixes to supabase connection. add recipient slash command now works; additional bugs still to be fixed.
 
 
 
