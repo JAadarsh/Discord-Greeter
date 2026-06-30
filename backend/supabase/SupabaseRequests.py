@@ -37,11 +37,18 @@ class Database:
         await self.client.table("messenger").upsert(data_to_save).execute()
 
     async def set_universal_message(self, user_id: int, message: str):
-        """Updates or sets the message. Uses upsert to create row if missing."""
+        """Updates or sets the message while ensuring the recipient list is initialized."""
+
+        response = await self.client.table("messenger").select("recipient_list").eq("user_id", user_id).execute()
+        if response.data:
+            recipient_list = response.data[0].get("recipient_list") or []
+        else:
+            recipient_list = []
 
         await self.client.table("messenger").upsert({
             "user_id": user_id,
-            "universal_message": message
+            "recipient_list": recipient_list,
+            "universal_message": message or ""
         }).execute()
 
     async def get_universal_message(self, user_id: int) -> str:
