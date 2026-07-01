@@ -1,0 +1,20 @@
+{
+  "name": "greeter-bot",
+  "version": "0.1.1",
+  "description": "Discord bot with TypeScript microservice backend",
+  "type": "module",
+  "scripts": {
+    "start:server": "node backend/openrouterts/server.ts",
+    "dev:server": "ts-node backend/openrouterts/server.ts"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "dotenv": "^17.4.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "ts-node": "^10.9.2",
+    "@types/node": "^26.0.0",
+    "@types/express": "^5.0.6"
+  }
+}

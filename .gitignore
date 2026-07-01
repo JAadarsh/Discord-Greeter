@@ -1,5 +1,16 @@
+# std. gitignore files
 .env
 logs.txt
 discord.log
+misc_files/
+
+# .py files
 .venv/
 __pycache__/
+testfilemain.py
+testfileOR.py
+backend/supabase/SupabaseTest.py
+
+# .ts .js & .json files
+node_modules/
+dist/
