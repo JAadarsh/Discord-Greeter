@@ -9,9 +9,6 @@ Aadarsh Joshi 2026
 from supabase import AsyncClient, acreate_client
 
 class Database:
-    """
-    Notice: the class must be initialized with url and key within main.py.
-    """
     def __init__(self, url: str, key: str):
         self.url = url
         self.key = key
@@ -19,11 +16,6 @@ class Database:
 
     async def connect(self):
         self.client = await acreate_client(self.url, self.key)
-
-    """
-    This is the section for the messenger. 
-    Purpose is to send dms to specific users.
-    """
     
     async def create_messenger_user(self, user_id: int):
         """Initializes or resets a messenger profile safely."""
