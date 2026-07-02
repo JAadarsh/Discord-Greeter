@@ -24,7 +24,7 @@ def response(prompt: str, reasoning: bool = True) -> str:
     payload = {
         'model': MODEL_NAME,
         'messages': [
-            {'role': 'user', 'content': f"Respond to this in under 150 words: {prompt}"}
+            {'role': 'user', 'content': f"Respond to this prompt very briefly in under 100 words with no special characters: {prompt}"}
         ],
     }
 
