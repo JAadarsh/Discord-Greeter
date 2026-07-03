@@ -10,11 +10,12 @@ import backend.openrouterpy.OpenRouterRequests as OpenRouterRequests
 import os
 import threading
 import logging
+import datetime
 from dotenv import load_dotenv
-from discord.ext import commands
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from backend.supabase.SupabaseRequests import Database
 from discord import app_commands
+from discord.ext import tasks, commands
 
 """
 IMPORTANT NOTICE - READ BEFORE DEPLOYING:
@@ -92,12 +93,12 @@ async def setmessage(interaction: discord.Interaction, *, text: str):
     if len(text) > 1500:
         return await interaction.response.send_message("Message is too long. Please keep it under 1500 characters.", ephemeral=True)
 
-    await bot.db.set_universal_message(interaction.user.id, text)
+    await bot.db.set_universal_message(interaction.user.id, interaction.guild_id, text)
     await interaction.response.send_message("Universal message updated.")
 
 @bot.tree.command(name="viewmessage", description="View current message")
 async def viewmessage(interaction: discord.Interaction):
-    message = await bot.db.get_universal_message(interaction.user.id)
+    message = await bot.db.get_universal_message(interaction.user.id, interaction.guild_id)
     if message:
         await interaction.response.send_message(f"Current message is {message}")
     else:
@@ -106,16 +107,15 @@ async def viewmessage(interaction: discord.Interaction):
 @bot.tree.command(name="add_recipient", description="Add someone to the mailing list")
 @app_commands.describe(recipient="User to add to recipient list")
 async def add_recipient(interaction: discord.Interaction, recipient: discord.User):
-    await bot.db.add_recipient(interaction.user.id, recipient.id)
+    await bot.db.add_recipient(interaction.user.id, interaction.guild_id, recipient.id)
     await interaction.response.send_message(f"{recipient.name} has been added to your recipient list.")
 
-
-"""
-Section is mainly for testing, may be refined in a later update. 19 June 2026
-"""
 @bot.tree.command(name="say_something", description="Get an AI generated response")
 @app_commands.describe(prompt="Prompt for the AI")
 async def say_something(interaction: discord.Interaction, *, prompt: str):
+    """
+    This method is mainly to make sure that the bot works, will likely stay a feature or become a helper function soon. 
+    """
     if len(prompt) > 500:
         return await interaction.response.send_message("Prompt is too long. Please keep it under 500 characters.", ephemeral=True)
 
@@ -127,5 +127,36 @@ async def say_something(interaction: discord.Interaction, *, prompt: str):
         return await interaction.followup.send(f"Error {e}. Please contact the developer.", ephemeral=True)
 
     await interaction.followup.send(response)
+
+def direct_message(user_id: int, message: str):
+    """
+    Helper method to send a dm to a user.
+    """
+    user = bot.get_user(user_id)
+    if user:
+        asyncio.create_task(user.send(message))
+        return "completed"
+    else:
+        return f"User with ID {user_id} not found."
+
+@bot.tree.command(name="set_time", description="Set a time for the bot to send a message")
+@app_commands.describe(hour="Hour (0-23)", minute="Minute (0-59)")
+async def set_time(interaction: discord.Interaction, hour: int, minute: int):
+    """
+    This method is to set a time for the bot to send a message. 
+    """
+    
+    try: 
+        if not (0 <= hour < 24) or not (0 <= minute < 60):
+            raise ValueError("Invalid time format. Please use HH:MM in 24-hour format.")
+    except ValueError as e:
+        return await interaction.response.send_message(str(e), ephemeral=True)
+
+    scheduled_time = datetime.datetime.combine(
+        datetime.datetime.now(datetime.timezone.utc).date(),
+        datetime.time(hour=hour, minute=minute, tzinfo=datetime.timezone.utc),
+    )
+    await bot.db.set_hours(interaction.user.id, interaction.guild_id, scheduled_time)
+    await interaction.response.send_message(f"Time set to {hour:02d}:{minute:02d} for your messages.")
 
 bot.run(token)
