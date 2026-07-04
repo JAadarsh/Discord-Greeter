@@ -6,7 +6,6 @@ Copyright Aadarsh Joshi 2026 all rights reserved.
 import asyncio
 import discord
 import backend.openrouterpy.OpenRouterRequests as OpenRouterRequests
-# import backend.openrouterpy.testfileOR as testfileOR # local testing only.
 import os
 import threading
 import logging
