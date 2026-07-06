@@ -1,5 +1,5 @@
 """
-Version 0.1.1
+Version 0.1.4
 Copyright Aadarsh Joshi 2026 all rights reserved.
 """
 
@@ -55,20 +55,63 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 # v This is the actual bot stuff
 # --------------------------------
 
+# looping tasks
+
+def direct_message(user_id: int, message: str):
+    """
+    Helper method to send a dm to a user.
+    """
+    user = bot.get_user(user_id)
+    if user:
+        asyncio.create_task(user.send(message))
+        return "completed"
+    else:
+        return f"User with ID {user_id} not found."
+
+@tasks.loop(minutes=1)
+async def check_scheduled_messages():
+    """
+    checks scheduled messages every minute
+    """
+    now = datetime.datetime.now(datetime.timezone.utc)
+    response = await bot.db.get_scheduled_messages(now)
+    
+    for entry in response:
+        user_id = entry["user_id"]
+        guild_id = entry["guild_id"]
+        message = entry["universal_message"]
+        recipient_list = entry["recipient_list"]
+
+        # Send the message to each recipient
+        for recipient_id in recipient_list:
+            direct_message(recipient_id, message)
+
+        # Optionally, you can log or notify the user that the message was sent
+        user = bot.get_user(user_id)
+        if user:
+            await user.send(f"Your scheduled message has been sent to {len(recipient_list)} recipients.")
+
+def looping_tasks():
+    """
+    helper method to start all looping tasks
+    (yes I know there's only one)
+    """
+    check_scheduled_messages.start()
 
 @bot.event
 async def on_ready():
     await bot.change_presence(status=discord.Status.online, activity=discord.Game(name="We are open source! Check the github!"))
     print(f'Logged in as {bot.user.name} (ID: {bot.user.id})')
 
+    # database connection
     bot.db = Database(supabase_url, supabase_key)
-
     try:
         await bot.db.connect()
         print("Database connected.")
     except Exception as e:
         print(f"Error connecting to database: {e}")
 
+    # / cmds
     try:
         synced = await bot.tree.sync()
         print(f"Synced {len(synced)} global slash commands.")
@@ -78,6 +121,8 @@ async def on_ready():
     except Exception as e:
         print(f"Command sync error: {e}")
 
+    # looping tasks
+    looping_tasks()
 
 # slash commands
 @bot.tree.command(name="setmessage", description="Set your own custom greeting message!")
@@ -120,17 +165,6 @@ async def say_something(interaction: discord.Interaction, *, prompt: str):
         return await interaction.followup.send(f"Error {e}. Please contact the developer.", ephemeral=True)
 
     await interaction.followup.send(response)
-
-def direct_message(user_id: int, message: str):
-    """
-    Helper method to send a dm to a user.
-    """
-    user = bot.get_user(user_id)
-    if user:
-        asyncio.create_task(user.send(message))
-        return "completed"
-    else:
-        return f"User with ID {user_id} not found."
 
 @bot.tree.command(name="set_time", description="Set a time for the bot to send a message")
 @app_commands.describe(hour="Hour (0-23)", minute="Minute (0-59)")
