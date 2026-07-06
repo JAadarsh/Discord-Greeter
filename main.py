@@ -17,19 +17,13 @@ from discord import app_commands
 from discord.ext import tasks, commands
 
 """
-IMPORTANT NOTICE - READ BEFORE DEPLOYING:
-This bot should not be deployed in its current state.
-
-Fixes made to the OR API. Response time is now around 3 seconds. 
-
-BUT DO NOT DEPLOY THIS BOT.
-Uploading to github for progress tracking incase I need to pull this back.
+Notice:
+Bot is incomplete, but can be deployed.
 """
 
 
 """
-This is to get around render's web hosting requirement.
-Emulates a website. 
+TODO: verify if we need this. Switched from render to Wispbyte.
 """
 class HealthHandler(BaseHTTPRequestHandler):
     def do_GET(self):

@@ -10,11 +10,11 @@ Do you have to do something every morning for your discord server? Any message y
 
 
 
-Preload a question of the day to send at a specific time, schedule a DM to a friend, or get a surprise with our optional AI integration!
+Preload a question of the day to send at a specific time, schedule a DM to a friend, or get a surprise with our AI integration features!
 
 
 
-This is a discord bot inspired by a good friend of mine. Hope you enjoy it!
+Currently in development, but is currently running.
 
 
 
@@ -32,7 +32,7 @@ This is a discord bot inspired by a good friend of mine. Hope you enjoy it!
 
 **GitHub** - Version Control
 
-**Render** - Webiste / Bot Hosting
+**Wispbyte** - Deployment Hosting
 
 **Supabase** - SQL Database Hosting \[AWS]
 
@@ -54,7 +54,11 @@ Copyright \& IP of Aadarsh Joshi 2026.
 
 
 
-v0.1.2: supabase connection fixed and setmessage is now functional. 
+v0.1.3: change in deployment provider.
+
+
+
+v0.1.2: supabase connection fixed and setmessage is now functional.
 
 
 
