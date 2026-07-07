@@ -10,6 +10,7 @@ __pycache__/
 testfilemain.py
 testfileOR.py
 backend/supabase/SupabaseTest.py
+backend/supabase/test_supabase_requests.py
 
 # .ts .js & .json files
 node_modules/
