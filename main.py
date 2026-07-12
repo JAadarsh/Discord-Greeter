@@ -7,11 +7,9 @@ import asyncio
 import discord
 from backend.openrouterpy import OpenRouterRequests
 import os
-import threading
 import logging
 import datetime
 from dotenv import load_dotenv
-from http.server import BaseHTTPRequestHandler, HTTPServer
 from backend.supabase.SupabaseRequests import Database
 from discord import app_commands
 from discord.ext import tasks, commands
@@ -21,23 +19,6 @@ from zoneinfo import ZoneInfo, available_timezones
 Notice:
 Bot is incomplete, but can be deployed.
 """
-
-
-"""
-TODO: verify if we need this. Switched from render to Wispbyte.
-"""
-class HealthHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.end_headers()
-        self.wfile.write(b"OK")
-
-def start_server():
-    port = int(os.environ.get("PORT", 10000))
-    server = HTTPServer(("0.0.0.0", port), HealthHandler)
-    server.serve_forever()
-
-threading.Thread(target=start_server, daemon=True).start()
 
 load_dotenv()
 token = os.getenv('DISCORD_TOKEN')
