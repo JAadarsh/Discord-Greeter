@@ -5,7 +5,7 @@ Copyright Aadarsh Joshi 2026 all rights reserved.
 
 import asyncio
 import discord
-from backend.openrouterpy import OpenRouterRequests
+from backend.openrouterpy import openrouterrequests as OpenRouterRequests
 import os
 import logging
 import datetime
