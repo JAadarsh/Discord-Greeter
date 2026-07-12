@@ -5,7 +5,7 @@ Copyright Aadarsh Joshi 2026 all rights reserved.
 
 import asyncio
 import discord
-import backend.openrouterpy.OpenRouterRequests as OpenRouterRequests
+from backend.openrouterpy import OpenRouterRequests
 import os
 import threading
 import logging
@@ -15,6 +15,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from backend.supabase.SupabaseRequests import Database
 from discord import app_commands
 from discord.ext import tasks, commands
+from zoneinfo import ZoneInfo, available_timezones
 
 """
 Notice:
