@@ -54,7 +54,11 @@ Copyright \& IP of Aadarsh Joshi 2026.
 
 
 
-v0.1.4 updates to add set_time function
+v0.1.5: QOL changes \& bug fixes
+
+
+
+v0.1.4: updates to add set\_time function
 
 
 

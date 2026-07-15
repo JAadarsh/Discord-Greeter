@@ -1,6 +1,6 @@
 {
   "name": "greeter-bot",
-  "version": "0.1.1",
+  "version": "0.1.5",
   "description": "Discord bot with TypeScript microservice backend",
   "type": "module",
   "scripts": {
