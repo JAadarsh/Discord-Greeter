@@ -1,0 +1,106 @@
+"""
+file with the most common timezones for the world.
+"""
+
+COMMON_TIMEZONES = [
+    # Africa
+    "Africa/Cairo",
+    "Africa/Casablanca",
+    "Africa/Johannesburg",
+    "Africa/Lagos",
+    "Africa/Nairobi",
+    
+    # Americas (North & South)
+    "America/Anchorage",
+    "America/Bogota",
+    "America/Buenos_Aires",
+    "America/Caracas",
+    "America/Chicago",
+    "America/Denver",
+    "America/Detroit",
+    "America/Edmonton",
+    "America/Guatemala",
+    "America/Halifax",
+    "America/Havana",
+    "America/Lima",
+    "America/Los_Angeles",
+    "America/Mexico_City",
+    "America/Miami",
+    "America/New_York",
+    "America/Phoenix",
+    "America/Santiago",
+    "America/Sao_Paulo",
+    "America/Toronto",
+    "America/Vancouver",
+    "America/Winnipeg",
+    
+    # Asia
+    "Asia/Almaty",
+    "Asia/Anadyr",
+    "Asia/Baghdad",
+    "Asia/Bangkok",
+    "Asia/Beijing",
+    "Asia/Dhaka",
+    "Asia/Dubai",
+    "Asia/Hong_Kong",
+    "Asia/Jakarta",
+    "Asia/Jerusalem",
+    "Asia/Kabul",
+    "Asia/Karachi",
+    "Asia/Kolkata",
+    "Asia/Kuala_Lumpur",
+    "Asia/Manila",
+    "Asia/Riyadh",
+    "Asia/Seoul",
+    "Asia/Shanghai",
+    "Asia/Singapore",
+    "Asia/Taipei",
+    "Asia/Tashkent",
+    "Asia/Tehran",
+    "Asia/Tokyo",
+    
+    # Atlantic & Pacific
+    "Atlantic/Reykjavik",
+    "Pacific/Auckland",
+    "Pacific/Chatham",
+    "Pacific/Fiji",
+    "Pacific/Honolulu",
+    "Pacific/Pago_Pago",
+    
+    # Europe
+    "Europe/Amsterdam",
+    "Europe/Athens",
+    "Europe/Belgrade",
+    "Europe/Berlin",
+    "Europe/Brussels",
+    "Europe/Bucharest",
+    "Europe/Budapest",
+    "Europe/Copenhagen",
+    "Europe/Dublin",
+    "Europe/Helsinki",
+    "Europe/Istanbul",
+    "Europe/Lisbon",
+    "Europe/London",
+    "Europe/Madrid",
+    "Europe/Moscow",
+    "Europe/Oslo",
+    "Europe/Paris",
+    "Europe/Prague",
+    "Europe/Rome",
+    "Europe/Stockholm",
+    "Europe/Vienna",
+    "Europe/Warsaw",
+    "Europe/Zurich",
+    
+    # Indian Ocean & Australia
+    "Indian/Maldives",
+    "Australia/Adelaide",
+    "Australia/Brisbane",
+    "Australia/Darwin",
+    "Australia/Melbourne",
+    "Australia/Perth",
+    "Australia/Sydney",
+    
+    # Baseline
+    "UTC"
+]
