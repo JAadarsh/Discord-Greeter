@@ -11,6 +11,7 @@ import logging
 import datetime
 from dotenv import load_dotenv
 from backend.supabase.SupabaseRequests import Database
+from backend.timezones import COMMON_TIMEZONES
 from discord import app_commands
 from discord.ext import tasks, commands
 from zoneinfo import ZoneInfo, available_timezones
