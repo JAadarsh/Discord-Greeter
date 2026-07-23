@@ -2,3 +2,6 @@ discord.py
 requests
 python-dotenv
 supabase
+python-dateutil
+pytz
+tzdata

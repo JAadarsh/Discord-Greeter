@@ -14,7 +14,24 @@ from backend.supabase.SupabaseRequests import Database
 from backend.timezones import COMMON_TIMEZONES
 from discord import app_commands
 from discord.ext import tasks, commands
-from zoneinfo import ZoneInfo, available_timezones
+
+try:
+    from zoneinfo import ZoneInfo, available_timezones, ZoneInfoNotFoundError
+except ImportError:  # pragma: no cover
+    ZoneInfo = None
+    available_timezones = lambda: set()
+    class ZoneInfoNotFoundError(Exception):
+        pass
+
+try:
+    from dateutil.tz import gettz
+except ImportError:
+    gettz = None
+
+try:
+    import pytz
+except ImportError:
+    pytz = None
 
 """
 Notice:
@@ -34,7 +51,7 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 
 
 # -------------------------------------------------
-# ^ This is the setup for bot & creating a server 
+# ^ This is the setup for bot 
 # v This is the actual bot stuff
 # --------------------------------
 
@@ -54,6 +71,74 @@ def direct_message(user_id: int, message: str):
     else:
         return f"User with ID {user_id} not found."
 
+async def timezone_autocomplete(interaction: discord.Interaction, current: str) -> list[app_commands.Choice[str]]:
+    """Autocomplete for common timezone names."""
+    lower_query = current.lower() if current else ""
+    matches = [tz for tz in COMMON_TIMEZONES if lower_query in tz.lower()]
+    return [app_commands.Choice(name=tz, value=tz) for tz in matches[:25]]
+
+def resolve_timezone(timezone_name: str):
+    """Resolve a timezone by name using zoneinfo or dateutil/pytz fallback."""
+    if not timezone_name:
+        raise ValueError("Timezone name is required.")
+
+    zoneinfo_error = None
+    if ZoneInfo is not None:
+        try:
+            return ZoneInfo(timezone_name)
+        except Exception as e:
+            zoneinfo_error = e
+
+    if gettz is not None:
+        timezone = gettz(timezone_name)
+        if timezone is not None:
+            return timezone
+
+    if pytz is not None:
+        try:
+            return pytz.timezone(timezone_name)
+        except Exception:
+            pass
+
+    package_suggestions = []
+    if gettz is None:
+        package_suggestions.append("python-dateutil")
+    if pytz is None:
+        package_suggestions.append("pytz")
+    package_suggestions.append("tzdata")
+    packages_text = ", ".join(package_suggestions)
+
+    message = f"No time zone found with key {timezone_name}."
+    if zoneinfo_error is not None:
+        message += f" ZoneInfo error: {zoneinfo_error}."
+    message += (
+        f" Please install one of {packages_text} and restart the bot, or use a supported timezone from autocomplete."
+    )
+    raise ValueError(message)
+
+
+def localize_datetime(timezone_obj, year: int, month: int, day: int, hour: int, minute: int) -> datetime.datetime:
+    if hasattr(timezone_obj, "localize"):
+        return timezone_obj.localize(datetime.datetime(year, month, day, hour, minute, 0))
+    return datetime.datetime(year, month, day, hour, minute, 0, tzinfo=timezone_obj)
+
+
+def next_scheduled_utc(scheduled_timezone: str, hour: int, minute: int, after: datetime.datetime | None = None) -> datetime.datetime:
+    if after is None:
+        after = datetime.datetime.now(datetime.timezone.utc)
+    if after.tzinfo is None:
+        after = after.replace(tzinfo=datetime.timezone.utc)
+
+    zone = resolve_timezone(scheduled_timezone)
+    now_local = after.astimezone(zone)
+    candidate_local = localize_datetime(zone, now_local.year, now_local.month, now_local.day, hour, minute)
+
+    if candidate_local <= now_local:
+        candidate_local = candidate_local + datetime.timedelta(days=1)
+
+    return candidate_local.astimezone(datetime.timezone.utc)
+
+
 @tasks.loop(minutes=1)
 async def check_scheduled_messages():
     """
@@ -67,6 +152,8 @@ async def check_scheduled_messages():
         guild_id = entry["guild_id"]
         message = entry["universal_message"]
         recipient_list = entry["recipient_list"]
+        scheduled_timezone = entry.get("scheduled_timezone")
+        scheduled_time = entry.get("timestamp")
 
         # Skip if message is empty
         if not message or not message.strip():
@@ -78,6 +165,25 @@ async def check_scheduled_messages():
                 direct_message(recipient_id, message)
         except Exception as e:
             print(f"Error sending message to user {recipient_id}: {e}")
+
+        if scheduled_timezone and scheduled_time:
+            try:
+                if isinstance(scheduled_time, str):
+                    scheduled_time = datetime.datetime.fromisoformat(scheduled_time)
+                    if scheduled_time.tzinfo is None:
+                        scheduled_time = scheduled_time.replace(tzinfo=datetime.timezone.utc)
+
+                local_zone = resolve_timezone(scheduled_timezone)
+                local_scheduled = scheduled_time.astimezone(local_zone)
+                next_timestamp = next_scheduled_utc(
+                    scheduled_timezone,
+                    local_scheduled.hour,
+                    local_scheduled.minute,
+                    after=now,
+                )
+                await bot.db.set_hours(user_id, guild_id, next_timestamp, scheduled_timezone)
+            except Exception as e:
+                print(f"Error rescheduling daily message for {user_id} in {guild_id}: {e}")
 
 def looping_tasks():
     """
@@ -169,23 +275,46 @@ async def say_something(interaction: discord.Interaction, *, prompt: str):
     await interaction.followup.send(response)
 
 @bot.tree.command(name="set_time", description="Set a time for the bot to send a message")
-@app_commands.describe(hour="Hour (0-23)", minute="Minute (0-59)")
-async def set_time(interaction: discord.Interaction, hour: int, minute: int):
+@app_commands.describe(hour="Hour (0-23)", minute="Minute (0-59)", timezone="Time zone for your scheduled message")
+@app_commands.autocomplete(timezone=timezone_autocomplete)
+async def set_time(interaction: discord.Interaction, hour: int, minute: int, timezone: str):
     """
     This method is to set a time for the bot to send a message. 
     """
-    
-    try: 
-        if not (0 <= hour < 24) or not (0 <= minute < 60):
-            raise ValueError("Invalid time format. Please use HH:MM in 24-hour format.")
+    if not (0 <= hour < 24) or not (0 <= minute < 60):
+        return await interaction.response.send_message(
+            "Invalid time format. Please use HH:MM in 24-hour format.", ephemeral=True
+        )
+
+    if timezone not in COMMON_TIMEZONES:
+        return await interaction.response.send_message(
+            "Invalid timezone. Choose a supported zone or use autocomplete.", ephemeral=True
+        )
+
+    try:
+        local_zone = resolve_timezone(timezone)
     except ValueError as e:
         return await interaction.response.send_message(str(e), ephemeral=True)
 
-    scheduled_time = datetime.datetime.combine(
-        datetime.datetime.now(datetime.timezone.utc).date(),
-        datetime.time(hour=hour, minute=minute, tzinfo=datetime.timezone.utc),
+    local_date = datetime.datetime.now(local_zone).date()
+    local_time = datetime.datetime(
+        local_date.year,
+        local_date.month,
+        local_date.day,
+        hour,
+        minute,
+        tzinfo=local_zone,
     )
-    await bot.db.set_hours(interaction.user.id, interaction.guild_id, scheduled_time)
-    await interaction.response.send_message(f"Time set to {hour:02d}:{minute:02d} for your messages.")
+    scheduled_time = local_time.astimezone(datetime.timezone.utc)
+
+    await bot.db.set_hours(
+        interaction.user.id,
+        interaction.guild_id,
+        scheduled_time,
+        scheduled_timezone=timezone,
+    )
+    await interaction.response.send_message(
+        f"Time set to {hour:02d}:{minute:02d} ({timezone}) which is {scheduled_time.strftime('%H:%M UTC')} UTC."
+    )
 
 bot.run(token)

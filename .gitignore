@@ -11,6 +11,8 @@ testfilemain.py
 testfileOR.py
 backend/supabase/SupabaseTest.py
 backend/supabase/test_supabase_requests.py
+tmp_tz_packages_check.py
+tmp_zoneinfo_test.py
 
 # .ts .js & .json files
 node_modules/

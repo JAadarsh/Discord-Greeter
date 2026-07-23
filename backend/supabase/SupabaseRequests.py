@@ -7,6 +7,7 @@ Aadarsh Joshi 2026
 
 # database.py
 import datetime
+from postgrest.exceptions import APIError
 from supabase import AsyncClient, acreate_client
 
 class Database:
@@ -14,6 +15,7 @@ class Database:
         self.url = url
         self.key = key
         self.client: AsyncClient = None
+        self._supports_scheduled_timezone: bool | None = None
 
     async def connect(self):
         self.client = await acreate_client(self.url, self.key)
@@ -97,12 +99,56 @@ class Database:
             return []  # Default empty list for new users
         return response.data[0]["recipient_list"] or []
 
+    async def _has_scheduled_timezone_column(self) -> bool:
+        if self._supports_scheduled_timezone is not None:
+            return self._supports_scheduled_timezone
+
+        try:
+            response = await self.client.table("messenger").select("scheduled_timezone").limit(1).execute()
+        except APIError as e:
+            if getattr(e, "code", None) == "42703" or getattr(e, "status_code", None) == 400:
+                self._supports_scheduled_timezone = False
+                return False
+            raise
+
+        if getattr(response, "error", None):
+            err = response.error
+            if err is not None and (
+                err.get("code") == "42703" or "scheduled_timezone" in (err.get("message") or "")
+            ):
+                self._supports_scheduled_timezone = False
+                return False
+
+        self._supports_scheduled_timezone = True
+        return True
+
     async def get_scheduled_messages(self, now: datetime.datetime | None = None) -> list:
         """Returns messenger rows whose scheduled time is due at the given time."""
 
-        response = await self.client.table("messenger").select(
-            "user_id,guild_id,timestamp,universal_message,recipient_list"
-        ).execute()
+        if await self._has_scheduled_timezone_column():
+            fields = "user_id,guild_id,timestamp,scheduled_timezone,universal_message,recipient_list"
+        else:
+            fields = "user_id,guild_id,timestamp,universal_message,recipient_list"
+
+        try:
+            response = await self.client.table("messenger").select(fields).execute()
+        except APIError as e:
+            if fields and "scheduled_timezone" in fields:
+                self._supports_scheduled_timezone = False
+                fields = "user_id,guild_id,timestamp,universal_message,recipient_list"
+                response = await self.client.table("messenger").select(fields).execute()
+            else:
+                raise
+
+        if getattr(response, "error", None):
+            err = response.error
+            if err is not None and (
+                err.get("code") == "42703" or "scheduled_timezone" in (err.get("message") or "")
+            ):
+                self._supports_scheduled_timezone = False
+                response = await self.client.table("messenger").select(
+                    "user_id,guild_id,timestamp,universal_message,recipient_list"
+                ).execute()
 
         if not response.data:
             return []
@@ -136,18 +182,26 @@ class Database:
 
         return due_messages
     
-    async def set_hours(self, user_id: int, guild_id: int, scheduled_time: datetime.datetime):
+    async def set_hours(
+        self,
+        user_id: int,
+        guild_id: int,
+        scheduled_time: datetime.datetime,
+        scheduled_timezone: str | None = None,
+    ):
         """Sets the scheduled timestamp for the user while preserving required messenger defaults."""
         if isinstance(scheduled_time, datetime.datetime):
             if scheduled_time.tzinfo is None:
                 scheduled_time = scheduled_time.replace(tzinfo=datetime.timezone.utc)
             scheduled_time = scheduled_time.isoformat()
 
-        response = await self.client.table("messenger").select("recipient_list,universal_message").eq("user_id", user_id).eq("guild_id", guild_id).execute()
+        response = await self.client.table("messenger").select("recipient_list,universal_message,scheduled_timezone").eq("user_id", user_id).eq("guild_id", guild_id).execute()
         if response.data:
             row = response.data[0]
             recipient_list = row.get("recipient_list") or []
             universal_message = row.get("universal_message") or ""
+            if scheduled_timezone is None:
+                scheduled_timezone = row.get("scheduled_timezone")
         else:
             recipient_list = []
             universal_message = ""
@@ -157,5 +211,6 @@ class Database:
             "guild_id": guild_id,
             "recipient_list": recipient_list,
             "universal_message": universal_message,
-            "timestamp": scheduled_time
+            "timestamp": scheduled_time,
+            "scheduled_timezone": scheduled_timezone,
         }).execute()
